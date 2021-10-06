@@ -14,7 +14,7 @@ def get_split_app_sql(model_names: [str], old_app: str, new_app: str):
         cursor.execute(f'''
             SELECT con.conname FROM pg_catalog.pg_constraint con
             INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
-            WHERE rel.relname = '{old_table_name}' AND con.contype != 'p';
+            WHERE rel.relname = '{old_table_name}' AND con.contype NOT IN ('p', 'u');
         ''')
         constraints = [c[0] for c in cursor.fetchall()]
 

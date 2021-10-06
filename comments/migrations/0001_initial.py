@@ -4,19 +4,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-def get_content_type_sql(model_names: [str], old_app: str, new_app: str):
-    old_app = old_app.lower()
-    new_app = new_app.lower()
-    sql = ''
-    for model in set(model_names):
-        model = model.lower()
-        sql += f'''
-            UPDATE django_content_type SET app_label = '{new_app}' 
-            WHERE app_label='{old_app}' AND model='{model}';
-        '''
-    return sql
-
-
 class Migration(migrations.Migration):
     initial = True
 
@@ -26,9 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.SeparateDatabaseAndState(
-            database_operations=[
-                migrations.RunSQL(get_content_type_sql(['comment'], 'first', 'comments'))
-            ],
+            database_operations=[],
             state_operations=[
                 migrations.CreateModel(
                     name='Comment',

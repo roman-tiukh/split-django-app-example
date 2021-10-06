@@ -4,8 +4,11 @@ from django.db import migrations
 
 
 def get_rename_sql(model_names: [str], old_app: str, new_app: str):
+    old_app = old_app.lower()
+    new_app = new_app.lower()
     sql = ''
-    for model in model_names:
+    for model in set(model_names):
+        model = model.lower()
         sql += f'ALTER TABLE {old_app}_{model} RENAME TO {new_app}_{model};\n'
     return sql
 

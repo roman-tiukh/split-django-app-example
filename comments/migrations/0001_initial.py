@@ -5,8 +5,11 @@ import django.db.models.deletion
 
 
 def get_content_type_sql(model_names: [str], old_app: str, new_app: str):
+    old_app = old_app.lower()
+    new_app = new_app.lower()
     sql = ''
-    for model in model_names:
+    for model in set(model_names):
+        model = model.lower()
         sql += f'''
             UPDATE django_content_type SET app_label = '{new_app}' 
             WHERE app_label='{old_app}' AND model='{model}';

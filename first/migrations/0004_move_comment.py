@@ -3,19 +3,30 @@ from django.db import migrations, connection
 from system.sql_generators import get_split_app_sql
 
 
+model_names = [
+    'comment',
+]
+
+
 def move_models_from_app(*args):
     with connection.cursor() as cursor:
         cursor.execute(get_split_app_sql(
-            model_names=[
-                'comment'
-            ],
+            model_names=model_names,
             old_app='first',
             new_app='comments',
         ))
 
 
-class Migration(migrations.Migration):
+def move_models_from_app_reverse(*args):
+    with connection.cursor() as cursor:
+        cursor.execute(get_split_app_sql(
+            model_names=model_names,
+            old_app='comments',
+            new_app='first',
+        ))
 
+
+class Migration(migrations.Migration):
     dependencies = [
         ('first', '0003_alter_comment_message'),
     ]
@@ -23,7 +34,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.SeparateDatabaseAndState(
             database_operations=[
-                migrations.RunPython(move_models_from_app),
+                migrations.RunPython(
+                    code=move_models_from_app,
+                    reverse_code=move_models_from_app_reverse,
+                ),
             ],
             state_operations=[
                 migrations.DeleteModel(name='Comment'),
